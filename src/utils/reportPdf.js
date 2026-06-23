@@ -1,3 +1,5 @@
+import { Capacitor } from '@capacitor/core';
+import { Directory, Filesystem } from '@capacitor/filesystem';
 import { formatMoney } from './date.js';
 
 const PAGE_WIDTH = 595;
@@ -8,17 +10,31 @@ const BODY_SIZE = 10;
 const TITLE_SIZE = 18;
 const SECTION_SIZE = 13;
 
-export function downloadLabourReportPdf(report) {
-  downloadReportPdf(report, 'labour');
+export async function downloadLabourReportPdf(report) {
+  try {
+    await downloadReportPdf(report, 'labour');
+  } catch (error) {
+    window.alert(error.message || 'PDF save failed');
+  }
 }
 
-export function downloadStockReportPdf(report) {
-  downloadReportPdf(report, 'stock');
+export async function downloadStockReportPdf(report) {
+  try {
+    await downloadReportPdf(report, 'stock');
+  } catch (error) {
+    window.alert(error.message || 'PDF save failed');
+  }
 }
 
-function downloadReportPdf(report, type) {
+async function downloadReportPdf(report, type) {
   const pdf = buildPdf(report, type);
   const fileName = buildFileName(report, type);
+
+  if (Capacitor.isNativePlatform()) {
+    await saveNativePdf(pdf, fileName);
+    return;
+  }
+
   const url = URL.createObjectURL(new Blob([pdf], { type: 'application/pdf' }));
   const link = document.createElement('a');
 
@@ -28,6 +44,16 @@ function downloadReportPdf(report, type) {
   link.click();
   link.remove();
   URL.revokeObjectURL(url);
+}
+
+async function saveNativePdf(pdf, fileName) {
+  await Filesystem.writeFile({
+    path: fileName,
+    data: stringToBase64(pdf),
+    directory: Directory.Documents,
+  });
+
+  window.alert(`PDF saved in Documents: ${fileName}`);
 }
 
 function buildPdf(report, type) {
@@ -227,4 +253,8 @@ function sanitizeText(value) {
 
 function escapePdfText(value) {
   return value.replaceAll('\\', '\\\\').replaceAll('(', '\\(').replaceAll(')', '\\)');
+}
+
+function stringToBase64(value) {
+  return btoa(value);
 }
