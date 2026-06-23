@@ -34,8 +34,14 @@ export default function ReportsPage() {
           <section className="rounded-lg bg-white p-4 shadow-soft">
             <p className="text-sm font-semibold text-ink/60">{report.range.from} to {report.range.to}</p>
             <div className="mt-3 grid grid-cols-2 gap-2">
-              <Button onClick={() => downloadLabourReportPdf(report)}>Labour PDF</Button>
-              <Button variant="secondary" onClick={() => downloadStockReportPdf(report)}>Stock PDF</Button>
+              <Button onClick={() => downloadLabourReportPdf(report)}>
+                <DownloadIcon />
+                Labour PDF
+              </Button>
+              <Button variant="secondary" onClick={() => downloadStockReportPdf(report)}>
+                <DownloadIcon />
+                Stock PDF
+              </Button>
             </div>
           </section>
 
@@ -74,6 +80,15 @@ export default function ReportsPage() {
         </>
       ) : null}
     </div>
+  );
+}
+
+function DownloadIcon() {
+  return (
+    <svg aria-hidden="true" className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24">
+      <path d="M12 3v11m0 0 4-4m-4 4-4-4" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" />
+      <path d="M5 17v2h14v-2" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" />
+    </svg>
   );
 }
 
