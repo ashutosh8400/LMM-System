@@ -9,6 +9,7 @@ import StockDetailPage from './pages/StockDetailPage.jsx';
 import ReportsPage from './pages/ReportsPage.jsx';
 import ReportDetailPage from './pages/ReportDetailPage.jsx';
 import AdminPage from './pages/AdminPage.jsx';
+import BackupPage from './pages/BackupPage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 import { AuthProvider, useAuth } from './hooks/useAuth.jsx';
 import { useDatabaseReady } from './hooks/useDatabaseReady.js';
@@ -63,6 +64,7 @@ function AppRoutes() {
           {isAdmin ? (
             <>
               <Route path="/admin" element={<AdminPage />} />
+              <Route path="/backup" element={<BackupPage />} />
               <Route path="*" element={<Navigate to="/admin" replace />} />
             </>
           ) : (
@@ -74,6 +76,7 @@ function AppRoutes() {
               <Route path="/stock/:id" element={<StockDetailPage />} />
               <Route path="/reports" element={<ReportsPage />} />
               <Route path="/reports/:section" element={<ReportDetailPage />} />
+              <Route path="/backup" element={<BackupPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </>
           )}

@@ -6,6 +6,7 @@ const nav = [
   { to: '/labour', label: 'Labour' },
   { to: '/stock', label: 'Stock' },
   { to: '/reports', label: 'Reports' },
+  { to: '/backup', label: 'Backup' },
 ];
 
 const titles = {
@@ -13,6 +14,7 @@ const titles = {
   '/labour': 'Labour Management',
   '/stock': 'Stock Management',
   '/reports': 'Reports',
+  '/backup': 'Backup & Restore',
   '/admin': 'Admin',
 };
 
@@ -29,7 +31,7 @@ export default function AppLayout() {
         : location.pathname.startsWith('/reports/')
           ? 'Report Detail'
         : titles[location.pathname] || 'Construction Manager';
-  const visibleNav = isAdmin ? [{ to: '/admin', label: 'Admin' }] : nav;
+  const visibleNav = isAdmin ? [{ to: '/admin', label: 'Admin' }, { to: '/backup', label: 'Backup' }] : nav;
 
   return (
     <div className="min-h-screen bg-field text-ink">
@@ -53,7 +55,7 @@ export default function AppLayout() {
       </main>
 
       <nav className="safe-bottom fixed inset-x-0 bottom-0 z-20 border-t border-black/10 bg-white/95 px-2 pt-2 shadow-[0_-8px_24px_rgba(0,0,0,0.08)] backdrop-blur">
-        <div className={`mx-auto grid max-w-3xl gap-1 ${isAdmin ? 'grid-cols-1' : 'grid-cols-4'}`}>
+        <div className={`mx-auto grid max-w-3xl gap-1 ${isAdmin ? 'grid-cols-2' : 'grid-cols-5'}`}>
           {visibleNav.map((item) => (
             <NavLink
               key={item.to}

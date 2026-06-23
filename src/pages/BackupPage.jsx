@@ -6,6 +6,7 @@ import { exportDatabaseJson, importDatabaseJson } from '../db/database.js';
 
 export default function BackupPage() {
   const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState('');
   const inputRef = useRef(null);
   const { showToast } = useToast();
 
@@ -20,9 +21,13 @@ export default function BackupPage() {
         directory: Directory.Documents,
         encoding: Encoding.UTF8,
       });
-      showToast(`Backup saved: ${fileName}`);
+      const text = `Backup saved in Documents: ${fileName}`;
+      setMessage(text);
+      showToast('Backup saved');
     } catch (error) {
-      showToast(error.message || 'Backup failed');
+      const text = error.message || 'Backup failed';
+      setMessage(text);
+      showToast(text);
     } finally {
       setBusy(false);
     }
@@ -35,9 +40,13 @@ export default function BackupPage() {
     try {
       const text = await file.text();
       await importDatabaseJson(JSON.parse(text));
+      const success = 'Backup restored. Your old data is back.';
+      setMessage(success);
       showToast('Backup restored');
     } catch (error) {
-      showToast(error.message || 'Restore failed');
+      const text = error.message || 'Restore failed';
+      setMessage(text);
+      showToast(text);
     } finally {
       setBusy(false);
       event.target.value = '';
@@ -47,15 +56,17 @@ export default function BackupPage() {
   return (
     <div className="space-y-4">
       <section className="rounded-lg bg-white p-4 shadow-soft">
-        <h2 className="text-lg font-bold">SQLite Backup</h2>
-        <p className="mt-2 text-sm text-ink/70">
-          Export and restore a local SQLite JSON backup. The same code path is compatible with Android and future iOS builds.
-        </p>
+        <h2 className="text-lg font-bold">Backup & Restore</h2>
+        <div className="mt-2 space-y-2 text-sm text-ink/70">
+          <p>Uninstall karne se pehle backup banao. Reinstall ke baad isi file se data wapas restore ho jayega.</p>
+          <p>Backup file phone ke Documents/Files folder mein save hoti hai. Is file ko delete mat karna.</p>
+        </div>
         <div className="mt-4 grid gap-3">
-          <Button disabled={busy} onClick={backup}>Create Backup</Button>
+          <Button disabled={busy} onClick={backup}>{busy ? 'Please wait...' : 'Create Backup'}</Button>
           <Button disabled={busy} variant="secondary" onClick={() => inputRef.current?.click()}>Restore Backup</Button>
           <input ref={inputRef} className="hidden" type="file" accept="application/json,.json" onChange={restore} />
         </div>
+        {message ? <p className="mt-4 rounded-md bg-blue-50 p-3 text-sm font-semibold text-blue-900">{message}</p> : null}
       </section>
     </div>
   );

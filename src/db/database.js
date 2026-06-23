@@ -4,6 +4,24 @@ import { DB_NAME, DB_VERSION, MIGRATIONS, SCHEMA } from './schema.js';
 
 const sqlite = new SQLiteConnection(CapacitorSQLite);
 const WEB_WASM_PATH = '/assets/sqljs-1.11';
+const BACKUP_TABLES = [
+  'users',
+  'labour',
+  'attendance',
+  'labour_payments',
+  'stock_items',
+  'stock_transactions',
+  'stock_payments',
+];
+const RESTORE_DELETE_ORDER = [
+  'stock_payments',
+  'stock_transactions',
+  'labour_payments',
+  'attendance',
+  'stock_items',
+  'labour',
+  'users',
+];
 let db;
 
 async function ensureWebStore() {
@@ -73,14 +91,54 @@ export async function execute(statement) {
 
 export async function exportDatabaseJson() {
   await initDatabase();
-  const result = await sqlite.exportToJson(DB_NAME, 'full');
-  return result.export;
+  const tables = {};
+
+  for (const table of BACKUP_TABLES) {
+    tables[table] = await query(`SELECT * FROM ${table}`);
+  }
+
+  return {
+    app: 'construction-manager',
+    version: 1,
+    exported_at: new Date().toISOString(),
+    tables,
+  };
 }
 
 export async function importDatabaseJson(json) {
   await initDatabase();
-  await sqlite.importFromJson(JSON.stringify(json));
+
+  if (!json?.tables) {
+    throw new Error('Invalid backup file');
+  }
+
+  await execute('PRAGMA foreign_keys = OFF;');
+
+  try {
+    for (const table of RESTORE_DELETE_ORDER) {
+      await run(`DELETE FROM ${table}`);
+    }
+
+    for (const table of BACKUP_TABLES) {
+      await insertRows(table, json.tables[table] || []);
+    }
+  } finally {
+    await execute('PRAGMA foreign_keys = ON;');
+  }
+
   await persistWeb();
+}
+
+async function insertRows(table, rows) {
+  for (const row of rows) {
+    const columns = Object.keys(row);
+    if (columns.length === 0) continue;
+
+    const placeholders = columns.map(() => '?').join(', ');
+    const columnList = columns.join(', ');
+    const values = columns.map((column) => row[column]);
+    await run(`INSERT INTO ${table} (${columnList}) VALUES (${placeholders})`, values);
+  }
 }
 
 async function persistWeb() {
