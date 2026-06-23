@@ -1,0 +1,15 @@
+{
+	"appId": "com.local.constructionmanager",
+	"appName": "Construction Manager",
+	"webDir": "dist",
+	"bundledWebRuntime": false,
+	"plugins": {
+		"CapacitorSQLite": {
+			"iosDatabaseLocation": "Library/CapacitorDatabase",
+			"androidIsEncryption": false,
+			"androidBiometric": {
+				"biometricAuth": false
+			}
+		}
+	}
+}
