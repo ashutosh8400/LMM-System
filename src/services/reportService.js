@@ -80,7 +80,7 @@ function buildStockSummary(transactions, payments) {
       .reduce((sum, row) => sum + Number(row.quantity || 0), 0),
     purchaseValue: transactions
       .filter((row) => row.type === 'IN')
-      .reduce((sum, row) => sum + Number(row.unit_price || 0), 0),
+      .reduce((sum, row) => sum + Number(row.quantity || 0) * Number(row.unit_price || 0), 0),
     paid: payments.reduce((sum, row) => sum + Number(row.amount || 0), 0),
   };
 }

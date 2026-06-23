@@ -7,19 +7,6 @@ export default function Dashboard() {
   return (
     <div className="space-y-4">
       <TodayReport />
-
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Link to="/labour" className="rounded-lg bg-white p-6 shadow-soft">
-          <p className="text-sm font-semibold text-brand">Daily attendance and wages</p>
-          <h2 className="mt-3 text-3xl font-bold">Labour Management</h2>
-          <p className="mt-4 text-sm text-ink/70">Add workers, mark attendance, and track paid and pending amounts.</p>
-        </Link>
-        <Link to="/stock" className="rounded-lg bg-white p-6 shadow-soft">
-          <p className="text-sm font-semibold text-warning">Materials and purchase records</p>
-          <h2 className="mt-3 text-3xl font-bold">Stock Management</h2>
-          <p className="mt-4 text-sm text-ink/70">Manage stock in, stock out, low stock alerts, and supplier history.</p>
-        </Link>
-      </div>
     </div>
   );
 }
